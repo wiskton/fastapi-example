@@ -1,4 +1,4 @@
-Uunning for the first time:
+Running for the first time:
 
     docker-compose up --build
 

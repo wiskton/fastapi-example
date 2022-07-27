@@ -10,8 +10,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlmodel import select
 
 from models.course_model import CourseModel
-from core.deps import get_session
-
+from models.user_model import UserModel
+from core.deps import get_session, get_current_user
 
 # Bypass warning SQLModel select
 from sqlmodel.sql.expression import Select, SelectOfScalar
@@ -26,7 +26,7 @@ router = APIRouter()
 
 # POST Course
 @router.post('/', status_code=status.HTTP_201_CREATED, response_model=CourseModel)
-async def post_course(course: CourseModel, db: AsyncSession = Depends(get_session)):
+async def post_course(course: CourseModel, user_logged: UserModel = Depends(get_current_user), db: AsyncSession = Depends(get_session)):
     new_course = CourseModel(title=course.title, hours=course.hours)
 
     db.add(new_course)
@@ -37,7 +37,7 @@ async def post_course(course: CourseModel, db: AsyncSession = Depends(get_sessio
 
 # GET Courses
 @router.get('/', response_model=List[CourseModel])
-async def get_courses(db: AsyncSession = Depends(get_session)):
+async def get_courses(user_logged: UserModel = Depends(get_current_user), db: AsyncSession = Depends(get_session)):
     async with db as session:
         query = select(CourseModel)
         result = await session.execute(query)
@@ -48,7 +48,7 @@ async def get_courses(db: AsyncSession = Depends(get_session)):
 
 # GET Course
 @router.get('/{course_id}', response_model=CourseModel, status_code=status.HTTP_200_OK)
-async def get_course(course_id: int, db: AsyncSession = Depends(get_session)):
+async def get_course(course_id: int, user_logged: UserModel = Depends(get_current_user), db: AsyncSession = Depends(get_session)):
     async with db as session:
         query = select(CourseModel).filter(CourseModel.id == course_id)
         result = await session.execute(query)
@@ -63,7 +63,7 @@ async def get_course(course_id: int, db: AsyncSession = Depends(get_session)):
 
 # PUT Course
 @router.put('/{course_id}', status_code=status.HTTP_202_ACCEPTED, response_model=CourseModel)
-async def put_course(course_id: int, course: CourseModel, db: AsyncSession = Depends(get_session)):
+async def put_course(course_id: int, course: CourseModel, user_logged: UserModel = Depends(get_current_user), db: AsyncSession = Depends(get_session)):
     async with db as session:
         query = select(CourseModel).filter(CourseModel.id == course_id)
         result = await session.execute(query)
@@ -83,7 +83,7 @@ async def put_course(course_id: int, course: CourseModel, db: AsyncSession = Dep
 
 # DELETE Course
 @router.delete('/{course_id}', status_code=status.HTTP_204_NO_CONTENT)
-async def delete_course(course_id: int, db: AsyncSession = Depends(get_session)):
+async def delete_course(course_id: int, user_logged: UserModel = Depends(get_current_user), db: AsyncSession = Depends(get_session)):
     async with db as session:
         query = select(CourseModel).filter(CourseModel.id == course_id)
         result = await session.execute(query)

@@ -1,4 +1,4 @@
-FROM python:3.7-alpine
+FROM python:3.10-alpine
 ENV PYTHONUNBUFFERED 1
 
 RUN apk update && apk add --no-cache build-base jpeg-dev zlib-dev postgresql-dev g++ gcc python3-dev musl-dev bash tzdata mailcap; \
