@@ -19,7 +19,7 @@ from pydantic import EmailStr
 
 
 oauth2_schema = OAuth2PasswordBearer(
-    tokenUrl=f"{settings.API_V1_STR}/usuarios/login"
+    tokenUrl=f"{settings.API_V1_STR}/users/login"
 )
 
 
